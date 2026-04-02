@@ -23,6 +23,7 @@ class PostController extends Controller
             "content" => "This is the content of my third post."
         ]
     ];
+    // INDEX: Display all posts
     function index()
     {
         $posts = $this->posts;
@@ -48,8 +49,7 @@ class PostController extends Controller
     }
     function store()
     {
-      return redirect('/posts?created=1');
-
+        return redirect('/posts?created=1');
     }
 
     function edit($id)
