@@ -30,6 +30,7 @@ class PostController extends Controller
         return view('posts.index', compact('posts'));
     }
 
+    // SHOW: Display a single post by ID
     function show($id)
     {
         $post = null;
