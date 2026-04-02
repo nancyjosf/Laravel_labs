@@ -44,10 +44,12 @@ class PostController extends Controller
     }
 
 
+    // CREATE: Show create form
     function create()
     {
         return view('posts.create');
     }
+    // STORE: Save new post
     function store()
     {
         return redirect('/posts?created=1');
