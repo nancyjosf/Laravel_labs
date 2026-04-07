@@ -2,77 +2,64 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use Illuminate\Http\Request;
+use App\Models\Post;
+use App\Models\User;
 
 class PostController extends Controller
 {
-    public $posts = [
-        [
-            "id" => 1,
-            "title" => "My first post",
-            "content" => "This is the content of my first post."
-        ],
-        [
-            "id" => 2,
-            "title" => "My second post",
-            "content" => "This is the content of my second post."
-        ],
-        [
-            "id" => 3,
-            "title" => "My third post",
-            "content" => "This is the content of my third post."
-        ]
-    ];
-    // INDEX: Display all posts
+   
     function index()
     {
-        $posts = $this->posts;
+        $posts = Post::with('user')->paginate(10);
         return view('posts.index', compact('posts'));
     }
 
-    // SHOW: Display a single post by ID
     function show($id)
     {
-        $post = null;
-        foreach ($this->posts as $p) {
-            if ($p["id"] == $id) {
-                $post = $p;
-                break;
-            }
-        }
+        $post = Post::findorFail($id);
         return view('posts.show', compact('post'));
     }
 
 
-    // CREATE: Show create form
     function create()
     {
-        return view('posts.create');
+        $users = User::all();
+        return view('posts.create', compact('users'));
     }
-    // STORE: Save new post
-    function store()
+    function store(StorePostRequest $request)
     {
+        $post = Post::create($request->validated());    
+            
         return redirect('/posts?created=1');
     }
 
-    function edit($id)
-    {
-        $post = null;
-        foreach ($this->posts as $p) {
-            if ($p["id"] == $id) {
-                $post = $p;
-                break;
-            }
-        }
-        return view('posts.edit', compact('post'));
-    }
+   function edit($id)
+{
+    $post = Post::findorFail($id);
+    $users = User::all();  
+    return view('posts.edit', compact('post', 'users'));  
+}
 
-    function update($id, Request $request)
+    function update($id, UpdatePostRequest $request)
     {
+        $post = Post::findorFail($id);
+        $post->update($request->validated());
         return redirect('/posts?updated=1');
     }
+    
     function destroy($id)
     {
-        return redirect('/posts?success=1');
+        Post::destroy($id);
+        return redirect('/posts?deleted=1');
     }
+
+    function restore($id)
+    {
+        Post::withTrashed()->findOrFail($id)->restore();
+        return redirect('/posts?restored=1');
+    }
+    
 }
