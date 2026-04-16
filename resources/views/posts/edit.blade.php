@@ -1,6 +1,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-<div class="container mx-auto mt-10 p-4 max-w-lg">
+<div class="container mx-auto mt-10 p-4 pb-28 max-w-lg">
 
     <h2 class="text-xl font-semibold text-gray-800 mb-6">Edit Post</h2>
 
@@ -8,7 +8,7 @@
     <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
         <ul class="list-disc list-inside text-red-600 text-sm">
             @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
+            <li>{{ $error }}</li>
             @endforeach
         </ul>
     </div>
@@ -32,7 +32,7 @@
                 value="{{old('title', $post->title)}}"
                 class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm focus:border-gray-400 focus:ring-0 outline-none p-2 border @error('title') border-red-500 @enderror">
             @error('title')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
 
@@ -44,10 +44,10 @@
                 rows="4"
                 class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm focus:border-gray-400 focus:ring-0 outline-none p-2 border resize-none @error('content') border-red-500 @enderror">{{old('content', $post->content)}}</textarea>
             @error('content')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
-        
+
         <div>
             <label class="block text-sm font-medium text-gray-700" for="user_id">Author</label>
             <select name="user_id" id="user_id" class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm focus:border-gray-400 focus:ring-0 outline-none p-2 border @error('user_id') border-red-500 @enderror">
@@ -58,7 +58,7 @@
                 @endforeach
             </select>
             @error('user_id')
-                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
             @enderror
         </div>
 

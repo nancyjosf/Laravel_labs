@@ -24,6 +24,12 @@
 </div>
 @endif
 
+@if(request('force_deleted'))
+<div class="m-5 p-4 bg-green-50 border border-green-200 rounded-md">
+    <p class="text-green-600 text-sm">Post permanently deleted successfully!</p>
+</div>
+@endif
+
 <div class="overflow-x-auto p-5">
     <table class="min-w-full divide-y-2 divide-gray-200 bg-white text-sm">
         <thead class="ltr:text-left rtl:text-right">
@@ -73,7 +79,13 @@
                                 Restore
                             </button>
                         </form>
-                        <span class="text-gray-400 text-xs italic">(Deleted)</span>
+                        <form action="{{ route('posts.forceDelete', $post->id) }}" method="POST" class="inline" onsubmit="return confirm('This will permanently delete the post. Continue?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="border border-red-500 bg-red-50 px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-100">
+                                Delete Permanently
+                            </button>
+                        </form>
                     </div>
                     @endif
                 </td>

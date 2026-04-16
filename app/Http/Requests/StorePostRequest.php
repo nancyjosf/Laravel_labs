@@ -25,7 +25,7 @@ class StorePostRequest extends FormRequest
         $postId = $this->route('id');
 
         return [
-            'title' => 'required|min:3|unique:posts,title' . ($postId ? ",$postId" : ''),
+            'title' => 'required|min:3|unique:posts,title' . ($postId ? ",$postId" : ''),//required to ensure the title is provided, min:3 to ensure it's at least 3 characters, unique:posts,title to ensure it's unique in the posts table, and if $postId is present (for update), it will ignore the current post's title for uniqueness check
             'content' => 'required|min:10',
             'user_id' => 'required|exists:users,id'
         ];
