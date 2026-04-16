@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -16,8 +17,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(100)->create()->each(function ($user) {
-            Post::factory(rand(1, 5))->create(['user_id' => $user->id]);
-        });
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::table('comments')->truncate();
+        DB::table('posts')->truncate();
+        DB::table('users')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+        for ($i = 1; $i <= 100; $i++) {
+            $user = User::factory()->create([
+                'name' => 'user' . $i,
+                'email' => 'user' . $i . '@example.com',
+            ]);
+
+            Post::factory()->create([
+                'title' => 'Post ' . $i,
+                'user_id' => $user->id,
+            ]);
+        }
     }
 }

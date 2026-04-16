@@ -23,9 +23,10 @@ class UpdatePostRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|unique:posts,title,' . $this->route('id') . '|min:3',
+            'title' => 'required|unique:posts,title,' . $this->route('post') . '|min:3',
             'content' => 'required|min:10',
-            'user_id' => 'required|exists:users,id'
+            'user_id' => 'required|exists:users,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Max 2MB
         ];
     }
 
@@ -39,6 +40,9 @@ class UpdatePostRequest extends FormRequest
             'content.min' => 'The content must be at least 10 characters.',
             'user_id.required' => 'The user field is required.',
             'user_id.exists' => 'The selected user is invalid.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
+            'image.max' => 'The image may not be greater than 2048 kilobytes.',
         ];
     }
 }

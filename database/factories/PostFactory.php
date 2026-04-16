@@ -18,8 +18,9 @@ class PostFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->sentence(3),
+            'title' => fake()->sentence(3),//sentence(3) to generate a title with 3 words fake
             'content' => fake()->sentences(5, true),
+            'user_id' => \App\Models\User::factory(),
         ];
     }
 }

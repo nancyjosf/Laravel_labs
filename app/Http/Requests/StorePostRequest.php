@@ -27,7 +27,8 @@ class StorePostRequest extends FormRequest
         return [
             'title' => 'required|min:3|unique:posts,title' . ($postId ? ",$postId" : ''),
             'content' => 'required|min:10',
-            'user_id' => 'required|exists:users,id'
+            'user_id' => 'required|exists:users,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Max 2MB
         ];
     }
 
@@ -41,6 +42,9 @@ class StorePostRequest extends FormRequest
             'content.min' => 'The content must be at least 10 characters.',
             'user_id.required' => 'The user field is required.',
             'user_id.exists' => 'The selected user is invalid.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
+            'image.max' => 'The image may not be greater than 2048 kilobytes.',
         ];
     }
 }
