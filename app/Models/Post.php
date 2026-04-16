@@ -12,7 +12,7 @@ class Post extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['title', 'content', 'user_id'];
+    protected $fillable = ['title', 'content', 'user_id', 'image_path'];
 
 
     public function user(): BelongsTo
@@ -24,5 +24,12 @@ class Post extends Model
     {
         return $this->morphMany(Comment::class, 'commentable')->latest();
     }
-    
+
+    /**
+     * Check if the given user owns this post
+     */
+    public function isOwnedBy($user)
+    {
+        return $this->user_id === $user->id;
+    }
 }

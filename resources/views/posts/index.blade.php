@@ -1,4 +1,4 @@
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+<x-app-layout>
 
 @if(request('updated'))
 <div class="m-5 p-4 bg-green-50 border border-green-200 rounded-md">
@@ -115,3 +115,4 @@
         {{ $posts->links() }}
     </div>
 </div>
+</x-app-layout>

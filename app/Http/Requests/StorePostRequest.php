@@ -25,9 +25,10 @@ class StorePostRequest extends FormRequest
         $postId = $this->route('id');
 
         return [
-            'title' => 'required|min:3|unique:posts,title' . ($postId ? ",$postId" : ''),//required to ensure the title is provided, min:3 to ensure it's at least 3 characters, unique:posts,title to ensure it's unique in the posts table, and if $postId is present (for update), it will ignore the current post's title for uniqueness check
+            'title' => 'required|min:3|unique:posts,title' . ($postId ? ",$postId" : ''),
             'content' => 'required|min:10',
-            'user_id' => 'required|exists:users,id'
+            'user_id' => 'required|exists:users,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Max 2MB
         ];
     }
 
@@ -41,6 +42,9 @@ class StorePostRequest extends FormRequest
             'content.min' => 'The content must be at least 10 characters.',
             'user_id.required' => 'The user field is required.',
             'user_id.exists' => 'The selected user is invalid.',
+            'image.image' => 'The file must be an image.',
+            'image.mimes' => 'The image must be a file of type: jpeg, png, jpg, gif.',
+            'image.max' => 'The image may not be greater than 2048 kilobytes.',
         ];
     }
 }

@@ -7,6 +7,8 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -30,42 +32,107 @@ class PostController extends Controller
         $users = User::orderBy('id')->get();
         return view('posts.create', compact('users'));
     }
+
     function store(StorePostRequest $request)
     {
-        $post = Post::create($request->validated()); //validated() to get the validated data from the request from StorePostRequest   
+        $data = $request->validated();
+
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('posts', 'public');
+            $data['image_path'] = $path;
+        }
+
+        Post::create([
+            'title'    => $data['title'],
+            'content'  => $data['content'],
+            'user_id'  => Auth::id(),
+            'image_path' => $data['image_path'] ?? null,
+        ]);
 
         return redirect('/posts?created=1');
     }
-
     function edit($id)
     {
-        $post = Post::findorFail($id);
+        $post = Post::findOrFail($id);
+        
+        // Authorization: only owner can edit
+        if (!$post->isOwnedBy(Auth::user())) {
+            abort(403, 'Unauthorized action.');
+        }
+        
         $users = User::orderBy('id')->get();
         return view('posts.edit', compact('post', 'users'));
     }
 
     function update($id, UpdatePostRequest $request)
     {
-        $post = Post::findorFail($id);
-        $post->update($request->validated());
+        $post = Post::findOrFail($id);
+        
+        // Authorization: only owner can update
+        if (!$post->isOwnedBy(Auth::user())) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        $data = $request->validated();
+
+        // Handle image upload
+        if ($request->hasFile('image')) {
+            // Delete old image if exists
+            if ($post->image_path) {
+                Storage::disk('public')->delete($post->image_path);
+            }
+            $path = $request->file('image')->store('posts', 'public');
+            $data['image_path'] = $path;
+        }
+
+        $post->update($data);
         return redirect('/posts?updated=1');
     }
 
     function destroy($id)
     {
-        Post::destroy($id);
+        $post = Post::findOrFail($id);
+        
+        // Authorization: only owner can delete
+        if (!$post->isOwnedBy(Auth::user())) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        if ($post->image_path) {
+            Storage::disk('public')->delete($post->image_path);
+        }
+        $post->delete();
         return redirect('/posts?deleted=1');
     }
 
     function restore($id)
     {
-        Post::withTrashed()->findOrFail($id)->restore();
+        $post = Post::withTrashed()->findOrFail($id);
+        
+        // Authorization: only owner can restore
+        if (!$post->isOwnedBy(Auth::user())) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        $post->restore();
         return redirect('/posts?restored=1');
     }
 
     function forceDelete($id)
     {
-        Post::withTrashed()->findOrFail($id)->forceDelete();
+        $post = Post::withTrashed()->findOrFail($id);
+        
+        // Authorization: only owner can permanently delete
+        if (!$post->isOwnedBy(Auth::user())) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        // Delete image before permanently deleting post
+        if ($post->image_path) {
+            Storage::disk('public')->delete($post->image_path);
+        }
+        
+        $post->forceDelete();
         return redirect('/posts?force_deleted=1');
     }
 
